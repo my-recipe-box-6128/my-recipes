@@ -9,7 +9,7 @@ function parseRecipe(raw){
  const verb=/\b(preheat|mix|stir|add|bake|combine|whisk|simmer|saut[eé]|chop|heat|cook|pour|beat|fold|knead|marinate|refrigerate|serve|garnish|boil|roast|drain|season|slice|let|place|remove|cover)\b/i;
  const ingredient=/^(?:[\d¼½¾⅓⅔⅛⅜⅝⅞]|(?:cups?|tbsp|tablespoons?|tsp|teaspoons?|oz|ounces?|lbs?|pounds?|g|grams?|kg|ml|l|liters?|cloves?|cans?|packages?|pkg|sticks?|pinch|dash|slices?)\b|salt\b|pepper\b)/i;
  let section='';const notes=[];
- lines.forEach((line,i)=>{let h=head(line),m=inline(line);if(h){section=kind(h[1]);if(!out.title&&h[2])out.title=h[2];return}if(m){section=kind(m[1]);line=m[2]}else if(i===0&&!head(line)&&!ingredient.test(line)&&!verb.test(line)){out.title=line;return}
+ lines.forEach((line,i)=>{let h=head(line),m=inline(line);if(h){section=kind(h[1]);if(!out.title&&h[2])out.title=h[2];return}if(m){section=kind(m[1]);line=m[2]}else if(i===0&&!head(line)){out.title=line;if(!ingredient.test(line)&&!verb.test(line))return}
  const serving=line.match(/^(?:servings?|serves|yield|makes)\s*:?\s*(.+)$/i);if(serving){out.servings=serving[1];return}
  const clean=line.replace(/^[•*\-–]\s*/,'').trim();if(!clean)return;
  if(section==='ingredients')out.ingredients.push(clean);else if(section==='steps')out.steps.push(clean.replace(/^(?:step\s*)?\d+\s*[.):\-](?!\d)\s*/i,''));else if(section==='notes')notes.push(clean);else if(verb.test(clean)&&(!ingredient.test(clean)||/^\d+[.)]/.test(line)))out.steps.push(clean.replace(/^(?:step\s*)?\d+\s*[.):\-](?!\d)\s*/i,''));else if(ingredient.test(clean))out.ingredients.push(clean);else notes.push(clean);
