@@ -183,7 +183,7 @@ document.querySelector('meta[name="app-version"]').content='5.3-collection';
 <script>
 /* Collection importer: local only, isolated from the single recipe organizer. */
 const cookbookPause=()=>new Promise(r=>setTimeout(r,0));
-function cookbookClean(t){return String(t).replace(/C:\\Users\\[^\r\n]*?(?=\s{2,}|$)/gmi,'').replace(/https?:\/\/\S+\.(?:png|jpe?g|gif|webp)(?:\?\S*)?/gi,'').replace(/\r/g,'').replace(/[ \t]+\n/g,'\n').replace(/\n{4,}/g,'\n\n\n').trim()}
+function cookbookClean(t){return String(t).replace(/C:\\Users\\[^\r\n]*?\.(?:png|jpe?g|gif|bmp|webp|tiff?)["']?/gi,'').replace(/^\s*C:\\Users\\[^\r\n]*$/gmi,'').replace(/https?:\/\/\S+\.(?:png|jpe?g|gif|webp)(?:\?\S*)?/gi,'').replace(/\r/g,'').replace(/[ \t]+\n/g,'\n').replace(/\n{4,}/g,'\n\n\n').trim()}
 const cookbookIngredient=s=>/^(?:[•*–-]\s*)?(?:\d|[¼½¾⅓⅔⅛⅜⅝⅞]|salt\b|pepper\b|paprika\b|a few\b|pinch\b|dash\b)/i.test(s)&&!/^\d+[.)]\s/.test(s);
 const cookbookAction=s=>/^(?:\d+[.)]\s*)?(?:preheat|mix|stir|add|bake|combine|whisk|simmer|saute|sauté|chop|heat|cook|pour|beat|fold|knead|marinate|refrigerate|serve|garnish|boil|roast|drain|season|slice|let|place|remove|cover|spread|brush|put|broil|sprinkle|blend|roll|cut|wash|fry|cool|melt)\b/i.test(s);
 const cookbookSkip=s=>/^(?:how to (?:double|braid)|measurements?|food equivalen|substitution guide|liquid measures|yeast conversion|butter.*equivalen|margarine.*equivalen|air fryer food cooking guide|dairy meal ideas|different razzle ideas|gravy.*tips|.*conversion (?:table|chart))\b/i.test(s);
@@ -193,7 +193,7 @@ async function splitCookbook(text){
  for(let i=0;i<lines.length;i++){
   if(i%400===0)await cookbookPause();
   const s=lines[i];if(/^[_=–-]{5,}$/.test(s)){let j=i+1;while(j<lines.length&&!lines[j])j++;starts.add(j);continue}
-  if(cookbookSkip(s)){starts.add(i);continue}
+  if(cookbookSkip(s)||/^Minute Steak or Roast Recipes$/i.test(s)){starts.add(i);continue}
   if(!cookbookTitle(s))continue;
   const next=lines.slice(i+1,i+25).filter(x=>x&&!/^\[\[CBIMG/.test(x));
   let j=0;while(j<next.length&&(/^\(.+\)$/.test(next[j])||/^(?:ingredients|yields?|servings?|serves)\b/i.test(next[j])))j++;
@@ -206,7 +206,7 @@ async function splitCookbook(text){
   let block=lines.slice(cuts[c],cuts[c+1]).filter(s=>!/^[_=–-]{5,}$/.test(s)).join('\n').trim();if(!block)continue;
   const imageIds=[...block.matchAll(/\[\[CBIMG(\d+)\]\]/g)].map(m=>+m[1]);block=block.replace(/\[\[CBIMG\d+\]\]/g,'').trim();if(!block)continue;
   const ls=block.split('\n').filter(Boolean),title=ls[0],hasIngredients=ls.slice(1).some(cookbookIngredient),hasSteps=ls.slice(1).some(cookbookAction)||ls.some(s=>/^(?:instructions|directions|method)\b/i.test(s));
-  if(cookbookSkip(title)||!hasIngredients||!hasSteps){skipped.push({title,text:block});continue}
+  if(cookbookSkip(title)||(!/^Minute Steak or Roast Recipes$/i.test(title)&&(!hasIngredients||!hasSteps))){skipped.push({title,text:block});continue}
   const r=cookbookOrganize(block);recipesFound.push({...r,imageIds,selected:true});
  }
  return {recipes:recipesFound,skipped};
