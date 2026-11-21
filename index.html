@@ -186,7 +186,7 @@ const cookbookPause=()=>new Promise(r=>setTimeout(r,0));
 function cookbookClean(t){return String(t).replace(/C:\\Users\\[^\r\n]*?\.(?:png|jpe?g|gif|bmp|webp|tiff?)["']?/gi,'').replace(/^\s*C:\\Users\\[^\r\n]*$/gmi,'').replace(/https?:\/\/\S+\.(?:png|jpe?g|gif|webp)(?:\?\S*)?/gi,'').replace(/\r/g,'').replace(/[ \t]+\n/g,'\n').replace(/\n{4,}/g,'\n\n\n').trim()}
 const cookbookIngredient=s=>/^(?:[•*–-]\s*)?(?:\d|[¼½¾⅓⅔⅛⅜⅝⅞]|salt\b|pepper\b|paprika\b|a few\b|pinch\b|dash\b)/i.test(s)&&!/^\d+[.)]\s/.test(s);
 const cookbookAction=s=>/^(?:\d+[.)]\s*)?(?:preheat|mix|stir|add|bake|combine|whisk|simmer|saute|sauté|chop|heat|cook|pour|beat|fold|knead|marinate|refrigerate|serve|garnish|boil|roast|drain|season|slice|let|place|remove|cover|spread|brush|put|broil|sprinkle|blend|roll|cut|wash|fry|cool|melt)\b/i.test(s);
-const cookbookSkip=s=>/^(?:how to (?:double|braid)|measurements?|food equivalen|substitution guide|liquid measures|yeast conversion|butter.*equivalen|margarine.*equivalen|air fryer food cooking guide|dairy meal ideas|different razzle ideas|gravy.*tips|.*conversion (?:table|chart))\b/i.test(s);
+const cookbookSkip=s=>/^(?:how to (?:double|braid)|measurements?|food equivalen\w*|substitution guide|liquid measures|yeast conversion|butter.*equivalen\w*|margarine.*equivalen\w*|air fryer food cooking guide|dairy meal ideas|different razzle ideas|gravy.*tips|.*conversion (?:table|chart))\b/i.test(s);
 function cookbookTitle(s){return s.length>2&&s.length<105&&!/[:.!?;]$/.test(s)&&!/^\(/.test(s)&&!/[|\t]/.test(s)&&!cookbookIngredient(s)&&!cookbookAction(s)&&!/^\[\[CBIMG/.test(s)&&! /^(?:ingredients?|directions?|instructions?|method|yield|serves|notes?|for the|to bake|sauce|dough|filling|topping)\b/i.test(s)}
 async function splitCookbook(text){
  const lines=cookbookClean(text).split('\n').map(s=>s.trim()), starts=new Set([0]);
@@ -196,7 +196,7 @@ async function splitCookbook(text){
   if(cookbookSkip(s)||/^Minute Steak or Roast Recipes$/i.test(s)){starts.add(i);continue}
   if(!cookbookTitle(s))continue;
   const next=lines.slice(i+1,i+25).filter(x=>x&&!/^\[\[CBIMG/.test(x));
-  let j=0;while(j<next.length&&(/^\(.+\)$/.test(next[j])||/^(?:ingredients|yields?|servings?|serves)\b/i.test(next[j])))j++;
+  let j=0;while(j<next.length&&(/^\(.+\)$/.test(next[j])||/^(?:ingredients|yields?|servings?|serves)\b/i.test(next[j])||(/:\s*$/.test(next[j])&&next[j].length<75)))j++;
   if(cookbookIngredient(next[j]||'')&&(i===0||!lines[i-1]||/^\(.+\)$/.test(next[0]||'')))starts.add(i);
  }
  const cuts=[...starts].filter(i=>i<lines.length).sort((a,b)=>a-b);cuts.push(lines.length);
@@ -216,7 +216,7 @@ function cookbookOrganize(block){
  for(let i=1;i<ls.length;i++){
   let s=ls[i],m=s.match(/^(?:servings?|serves|yields?|makes)\s*:?\s*(.+)$/i);if(m){servings=m[1];continue}
   if(/^\(.+\)$/.test(s)&&i<4){notes.push('From: '+s.slice(1,-1));continue}
-  if(/^(?:(?:my|ima'?s|rochie'?s)\s+)?notes?\b|^(?:alternate|variation|tip)\b/i.test(s)){mode='notes';notes.push(s);continue}
+  if(/^(?:(?:my|ima['’]?s|rochie['’]?s)\s+)?notes?\b|^(?:alternate|variation|tip)\b/i.test(s)){mode='notes';notes.push(s);continue}
   if(/^(?:ingredients?)\s*:?$/i.test(s)){mode='ingredients';continue}
   if(/^(?:instructions?|directions?|method|to bake)\s*:?$/i.test(s)){mode='steps';continue}
   if(/:\s*$/.test(s)&&s.length<75){mode=/^(?:to |baking|assembly)/i.test(s)?'steps':'ingredients';(mode==='steps'?steps:ingredients).push(s);continue}
