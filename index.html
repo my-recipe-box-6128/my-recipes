@@ -195,7 +195,7 @@ async function splitCookbook(text){
   const s=lines[i];if(/^[_=–-]{5,}$/.test(s)){let j=i+1;while(j<lines.length&&!lines[j])j++;starts.add(j);continue}
   if(cookbookSkip(s)){starts.add(i);continue}
   if(!cookbookTitle(s))continue;
-  const next=lines.slice(i+1,i+9).filter(x=>x&&!/^\[\[CBIMG/.test(x));
+  const next=lines.slice(i+1,i+25).filter(x=>x&&!/^\[\[CBIMG/.test(x));
   let j=0;while(j<next.length&&(/^\(.+\)$/.test(next[j])||/^(?:ingredients|yields?|servings?|serves)\b/i.test(next[j])))j++;
   if(cookbookIngredient(next[j]||'')&&(i===0||!lines[i-1]||/^\(.+\)$/.test(next[0]||'')))starts.add(i);
  }
@@ -226,7 +226,7 @@ function cookbookOrganize(block){
  }
  return {...base,title:ls[0],servings,ingredients,steps,notes:notes.join('\n'),text:block,originalText:block};
 }
-async function cookbookPhoto(data){return new Promise(resolve=>{const im=new Image();im.onload=()=>{try{const scale=Math.min(1,800/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.max(1,Math.round(im.width*scale));c.height=Math.max(1,Math.round(im.height*scale));const ctx=c.getContext('2d');ctx.fillStyle='white';ctx.fillRect(0,0,c.width,c.height);ctx.drawImage(im,0,0,c.width,c.height);resolve(c.toDataURL('image/jpeg',.7))}catch{resolve(null)}};im.onerror=()=>resolve(null);im.src=data})}
+async function cookbookPhoto(data){return new Promise(resolve=>{const timeout=setTimeout(()=>resolve(null),4000),im=new Image();im.onload=()=>{clearTimeout(timeout);try{const scale=Math.min(1,800/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.max(1,Math.round(im.width*scale));c.height=Math.max(1,Math.round(im.height*scale));const ctx=c.getContext('2d');ctx.fillStyle='white';ctx.fillRect(0,0,c.width,c.height);ctx.drawImage(im,0,0,c.width,c.height);resolve(c.toDataURL('image/jpeg',.7))}catch{resolve(null)}};im.onerror=()=>{clearTimeout(timeout);resolve(null)};im.src=data})}
 async function cookbookRead(file,status){
  if(file.name.toLowerCase().endsWith('.txt'))return {text:await file.text(),images:[]};
  await loadWord();const images=[];let imageBytes=0;
