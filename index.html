@@ -316,6 +316,10 @@ const typedEdit=edit;edit=r=>{typedEdit(r);draft=withRecipeType(draft);const lab
 const refresh=()=>{if(!draft.typeUserSet){draft.type=detectRecipeType({title:$('#title').value,ingredients:readList('ingredients'),tags:$('#tags').value.split(',')});picker.value=draft.type}};
 $('#title').addEventListener('input',refresh);$('#tags').addEventListener('input',refresh);$('#ingredients').addEventListener('input',refresh);const organize=$('#organize').onclick;$('#organize').onclick=()=>{organize();refresh()};const save=$('#save').onclick;$('#save').onclick=()=>{refresh();save()};};
 const typedDetail=detail;detail=id=>{typedDetail(id);const r=recipes.find(x=>x.id===id);if(r){const p=document.createElement('p');p.className='muted';p.textContent=r.type||'Other';$('#work h2')?.after(p)}};
+
+// Keep v5 exports readable by versions whose sort menu predates types.
+const typedBackup=backupData;backupData=()=>{const d=typedBackup();if(d.sortPreference==='By type'){d.typeSortPreference='By type';d.sortPreference='A to Z'}return d};
+const typedRestore=restore;restore=async input=>{const file=input.files[0];if(!file)return;let d;try{d=JSON.parse(await file.text())}catch{}await typedRestore(input);if(d?.typeSortPreference==='By type'){more.sort='By type';$('#recipeSort').value=more.sort;saveMore();render()}};
 const typedTips=showTips;showTips=()=>{typedTips();const s=document.createElement('section');s.innerHTML='<h3>Sorting by type</h3><p>Types are familiar kitchen groups, like Soup, Bread, and Main Dish. We guess a type automatically when you add a recipe. Choose By type in the sort menu to browse in groups, or use Type to narrow your recipes along with tags and search.</p><p>To change a guess, open the recipe, tap Edit recipe, choose a Type, and save. You can always retype a recipe by hand. Your choice stays yours.</p>';$('#work .tips').append(s)};
 render();
 </script></body></html>
