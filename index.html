@@ -335,7 +335,7 @@ render();
 </script><script>
 // Recovered library: additive, retryable, and local to this browser.
 const chatgptLibraryFlag='chatgptLibraryLoaded_v1';
-const libraryTitle=s=>String(s||'').normalize('NFKC').toLowerCase().trim().replace(/[\p{P}\p{S}]+$/gu,'').trim().replace(/\brecipe$/,'').trim().replace(/[\p{P}\p{S}]+$/gu,'').trim();
+const libraryTitle=s=>String(s||'').normalize('NFKC').toLowerCase().trim().replace(/[\p{P}\p{S}]+$/gu,'').trim().replace(/\brecipe$/,'').trim().replace(/[\p{P}\p{S}]+/gu,' ').replace(/\s+/g,' ').trim();
 async function mergeChatGPTLibrary(){
  try{
   if(localStorage.getItem(chatgptLibraryFlag))return;
