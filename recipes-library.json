@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "source": "https://debbies-recipe-box-0c3.pages.dev/",
-  "recipeCount": 445,
+  "recipeCount": 446,
   "recipes": [
     {
       "title": "Whole Wheat Muffins",
@@ -9414,6 +9414,33 @@
         "2. Bake for 35–40 minutes."
       ],
       "notes": "- No eggs or dairy are needed.\n- The original recipe does not specify a pan size.\n- The mixing instructions above are suggested; the original provides only the ingredients, oven temperature, and baking time.\n- For a finishing touch, dust with powdered sugar or add chocolate frosting.\nSource\nRecipe by: Penina\nRecipe name: Crazy Cake\nSource: Personal recipe supplied in photo\nRecipe collection category: Desserts → Cakes → Crazy Chocolate Cake\n*The same page also mentions Truffle Mayo, but it doesn't include ingredients or preparation instructions for that recipe.*\nRecovered from public shared ChatGPT conversation: https://chatgpt.com/share/6b01b600-f950-83e9-81f5-64e07db88c72\nShared-chat mixing, pan-greasing, doneness-test and finishing suggestions are not verified original instructions.\nEmbedded collection alternative formula — Eggless Chocolate Cake (keep this formula separate from the primary version):\nIngredients: 1 ½ cups flour; 6 Tbl. oil; 1 cup sugar; 1 tsp. vanilla; 4 Tbsp. cocoa; 1 Tbsp. cider vinegar; 1 tsp. baking soda; 1 cup cold water; 1 tsp salt\nDirections: Preheat the oven to 350. Greasing the pan is not necessary. Mix flour, sugar, cocoa, baking soda & salt with a fork until well mixed. Pour in the oil, cider vinegar, vanilla & cold water. Mix again with the fork. Bake at 350 for 40 minutes.\nFrom: choosingvoluntarysimplicity.com\nDescriptive/repaired title based on recovered recipe contents. \nIncomplete source fragment: some ingredients or quantities may not have been recovered; none have been supplied.\nAutomatically parsed from recovered source text; unverified. Compare with the raw extraction before cooking."
+    },
+    {
+      "title": "Moroccan Honey Apricot Chicken Skewers",
+      "category": "Main Dish",
+      "ingredients": [
+        "2 pounds boneless chicken thighs, cubed",
+        "1/2 cup apricot preserves",
+        "2 tablespoons honey",
+        "2 tablespoons avocado oil",
+        "2 garlic cloves, minced",
+        "1 teaspoon ground cumin",
+        "1 teaspoon ground coriander",
+        "1/2 teaspoon cinnamon",
+        "1/2 teaspoon smoked paprika",
+        "1 teaspoon salt",
+        "1/2 teaspoon black pepper",
+        "1 red onion, cut into chunks",
+        "12 dried apricots"
+      ],
+      "directions": [
+        "1. Whisk together the apricot preserves, honey, avocado oil, garlic, cumin, coriander, cinnamon, paprika, salt, and pepper.",
+        "2. Set aside some of the marinade for brushing, then toss the chicken in the rest and refrigerate for at least 2 hours.",
+        "3. Thread the chicken onto skewers, alternating with red onion chunks and dried apricots.",
+        "4. Grill over medium heat, turning and brushing with the reserved marinade, until the chicken reaches 165°F internally and is nicely caramelized."
+      ],
+      "notes": "Shared in a WhatsApp recipe forward."
     }
-  ]
+  ],
+  "version": 2
 }
