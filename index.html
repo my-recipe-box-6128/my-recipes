@@ -334,14 +334,17 @@ const sectionTips=showTips;showTips=()=>{sectionTips();const p=document.createEl
 render();
 </script><script>
 // Recovered library: additive, retryable, and local to this browser.
-const chatgptLibraryFlag='chatgptLibraryLoaded_v1';
+const chatgptLibraryFlag='chatgptLibraryLoaded_v1',chatgptLibraryVersion='chatgptLibraryLoadedVersion';
 const libraryTitle=s=>String(s||'').normalize('NFKC').toLowerCase().trim().replace(/[\p{P}\p{S}]+$/gu,'').trim().replace(/\brecipe$/,'').trim().replace(/[\p{P}\p{S}]+/gu,' ').replace(/\s+/g,' ').trim();
 async function mergeChatGPTLibrary(){
  try{
-  if(localStorage.getItem(chatgptLibraryFlag))return;
-  const response=await fetch('recipes-library.json');if(!response.ok)throw Error('Library unavailable');
+  const response=await fetch('recipes-library.json',{cache:'no-cache'});if(!response.ok)throw Error('Library unavailable');
   const data=await response.json(),items=Array.isArray(data)?data:data.recipes;
   if(!Array.isArray(items)||!items.length||!items.every(r=>r&&typeof r.title==='string'&&r.title.trim()&&Array.isArray(r.ingredients)&&r.ingredients.every(s=>typeof s==='string')&&Array.isArray(r.directions)&&r.directions.every(s=>typeof s==='string')))throw Error('Invalid library');
+  const version=Array.isArray(data)?1:Number(data.version||1);
+  if(!Number.isSafeInteger(version)||version<1)throw Error('Invalid library version');
+  const loaded=Number(localStorage.getItem(chatgptLibraryVersion)||(localStorage.getItem(chatgptLibraryFlag)?1:0));
+  if(loaded>=version)return;
   const fullest=new Map(),size=r=>JSON.stringify([r.ingredients,r.directions,r.notes||'',r.servings||'']).length;
   for(const r of items){const k=libraryTitle(r.title),old=fullest.get(k);if(!old||size(r)>size(old))fullest.set(k,r)}
   const collection=more.collections.find(n=>n.trim().toLowerCase()==='chatgpt')||'ChatGPT';
@@ -353,7 +356,7 @@ async function mergeChatGPTLibrary(){
    if(batch.length){const next=[...batch,...recipes];try{localStorage.setItem(key,JSON.stringify(next))}catch{render();msg('Storage is full. Recovered recipes already added are safe; the remaining recipes will retry next time. Export a backup before freeing space.');return}recipes=next;added+=batch.length;render()}
    await new Promise(resolve=>setTimeout(resolve,16));
   }
-  localStorage.setItem(chatgptLibraryFlag,'1');render();msg('Added '+added+' recovered recipes to your ChatGPT collection');
+  localStorage.setItem(chatgptLibraryVersion,String(version));localStorage.setItem(chatgptLibraryFlag,'1');render();msg('Added '+added+' new '+(added===1?'recipe':'recipes')+' to your ChatGPT collection');
  }catch{msg('Recovered recipes could not finish loading. They will retry automatically next time.')}
 }
 const libraryTips=showTips;showTips=()=>{libraryTips();const s=document.createElement('section');s.innerHTML='<h3>Where the ChatGPT recipes came from</h3><p>Recovered recipes were added automatically to the ChatGPT collection. Many were rescued by machine from old chats, so some carry notes about missing quantities or unverified text. Check them before cooking.</p>';$('#work .tips').append(s)};
